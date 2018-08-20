@@ -6,15 +6,17 @@
 
 int main(int argc, char *argv[]){
     
+    emulator emu(1024*1024, 0x00, 0x7c00);
     if(argc != 2){
         fprintf(stderr, "error : you must specify program filename.\n");
         exit(-1);
     }
     
-    emulator emu(1024*1024, 0x00, 0x00);
     emu.load_program(argv[1], BINARY_SIZE);
     
-    while(emu.exec());
+    emu.dump_registers();
+    while(emu.exec()){}
+    emu.dump_registers();
     
     return 0;
 }
