@@ -2,3 +2,5 @@ bin/
 .obj/
 test/
 *.swp
+!/src/test/
+!/include/test/
