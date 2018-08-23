@@ -64,7 +64,7 @@ int8_t emulator::_get_sign_code8(uint32_t index){
 uint32_t emulator::_get_code32(uint32_t index){
     uint32_t ret = 0;
     for(int i = 0; i < 4; i++){
-        ret += _get_code8(index + i) << i * 4;
+        ret += (uint32_t)_get_code8(index + i) << i * 8;
     }
     return ret;
 }
