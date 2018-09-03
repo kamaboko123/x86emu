@@ -26,9 +26,16 @@ TEST_RESULT_FILE = test_result.xml
 #exclude main file for avoid duplicate main fuction with test codes
 MAIN_OBJ = $(OBJ_DIR)/main.o
 
+#test assembler codes
+AS = nasm
+ASM_SRC_DIR = src/test/asm/src
+ASM_SRC = $(wildcard $(ASM_SRC_DIR)/*.asm)
+ASM_TARGET_DIR = bin/test_bin
+ASM_TARGET = $(addprefix $(ASM_TARGET_DIR)/, $(notdir $(ASM_SRC:.asm=.bin)))
+
 .SECONDARY: $(OBJ)
 
-all: $(TARGET) test
+all: $(TARGET) test test_asm
 
 $(TARGET_DIR)/%: $(OBJ)
 	mkdir -p $(TARGET_DIR)
@@ -45,6 +52,12 @@ test: $(OBJ) $(TEST_OBJ)
 $(TEST_OBJ_DIR)/%.o: $(TEST_SRC_DIR)/%.cpp
 	mkdir -p $(TEST_OBJ_DIR)
 	$(CC) $(CFLAGS) $(INCLUDE) -D RESULT_FILE=\"$(TEST_RESULT_FILE)\" -o $@ -c $<
+
+test_asm: $(ASM_TARGET)
+
+$(ASM_TARGET_DIR)/%.bin: $(ASM_SRC)
+	mkdir -p $(ASM_TARGET_DIR)
+	$(AS) -o $@ $<
 
 clean:
 	rm -rf $(TARGET_DIR) $(OBJ_DIR) $(TEST_TARGET_DIR) $(TEST_OBJ_DIR)
