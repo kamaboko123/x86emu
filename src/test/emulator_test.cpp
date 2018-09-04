@@ -30,8 +30,18 @@ void FIXTURE_NAME::setUp() {}
 void FIXTURE_NAME::tearDown() {}
 
 void FIXTURE_NAME::test_core(){
-    emulator emu(MEMORY_SIZE, INIT_EIP, INIT_ESP);
-    emu.load_program("bin/data/test.bin", 0x0200);
+   emulator emu(MEMORY_SIZE, INIT_EIP, INIT_ESP);
+   
+    CPPUNIT_ASSERT_EQUAL((uint32_t)0x000000, emu.registers[EAX]);
+    CPPUNIT_ASSERT_EQUAL((uint32_t)0x000000, emu.registers[ECX]);
+    CPPUNIT_ASSERT_EQUAL((uint32_t)0x000000, emu.registers[EDX]);
+    CPPUNIT_ASSERT_EQUAL((uint32_t)0x000000, emu.registers[EBX]);
+    CPPUNIT_ASSERT_EQUAL((uint32_t)0x007c00, emu.registers[ESP]);
+    CPPUNIT_ASSERT_EQUAL((uint32_t)0x000000, emu.registers[EBP]);
+    CPPUNIT_ASSERT_EQUAL((uint32_t)0x000000, emu.registers[ESI]);
+    CPPUNIT_ASSERT_EQUAL((uint32_t)0x000000, emu.registers[EDI]);
+    
+   emu.load_program("bin/data/test.bin", 0x0200);
     while(emu.exec());
     
     CPPUNIT_ASSERT_EQUAL((uint32_t)0x000029, emu.registers[EAX]);

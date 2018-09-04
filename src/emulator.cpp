@@ -2,6 +2,7 @@
 #include "emulator.hpp"
 
 emulator::emulator(uint32_t memory_size, uint32_t init_eip, uint32_t init_esp){
+    for(int i = 0; i < REGISTERS_COUNT; i++) registers[i] = 0;
     memory = new uint8_t[memory_size]();
     eip = init_eip;
     registers[ESP] = init_esp;
