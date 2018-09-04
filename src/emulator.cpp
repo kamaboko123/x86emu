@@ -20,7 +20,7 @@ void emulator::_init_instructions(){
     instructions[0xEB] = &emulator::_short_jump;
 };
 
-void emulator::load_program(char *filename, uint32_t size){
+void emulator::load_program(const char *filename, uint32_t size){
     FILE *binary;
     
     binary = fopen(filename, "rb");

@@ -22,7 +22,7 @@ TEST_OBJ_DIR = .obj/test
 TEST_OBJ = $(addprefix $(TEST_OBJ_DIR)/, $(notdir $(TEST_SRC:.cpp=.o)))
 TEST_TARGET_DIR = bin
 TEST_TARGET = $(TEST_TARGET_DIR)/emu_test
-TEST_RESULT_FILE = test_result.xml
+TEST_RESULT_FILE = $(TEST_TARGET_DIR)/test_result.xml
 #exclude main file for avoid duplicate main fuction with test codes
 MAIN_OBJ = $(OBJ_DIR)/main.o
 
@@ -30,7 +30,7 @@ MAIN_OBJ = $(OBJ_DIR)/main.o
 AS = nasm
 ASM_SRC_DIR = src/test/asm/src
 ASM_SRC = $(wildcard $(ASM_SRC_DIR)/*.asm)
-ASM_TARGET_DIR = bin/test_bin
+ASM_TARGET_DIR = bin/data
 ASM_TARGET = $(addprefix $(ASM_TARGET_DIR)/, $(notdir $(ASM_SRC:.asm=.bin)))
 
 .SECONDARY: $(OBJ)
@@ -60,6 +60,6 @@ $(ASM_TARGET_DIR)/%.bin: $(ASM_SRC)
 	$(AS) -o $@ $<
 
 clean:
-	rm -rf $(TARGET_DIR) $(OBJ_DIR) $(TEST_TARGET_DIR) $(TEST_OBJ_DIR)
+	rm -rf $(TARGET_DIR) $(OBJ_DIR) $(TEST_TARGET_DIR) $(TEST_OBJ_DIR) $(TEST_RESULT_FILE)
 
 

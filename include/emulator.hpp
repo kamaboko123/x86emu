@@ -19,6 +19,7 @@ enum Register{
 };
 
 class emulator{
+friend class EmulatorTest;
 private:
     uint8_t *memory;
     uint32_t eip;
@@ -37,7 +38,7 @@ public:
     
     void dump_registers();
     
-    void load_program(char *filename, uint32_t size);
+    void load_program(const char *filename, uint32_t size);
     bool exec();
 
 private:
