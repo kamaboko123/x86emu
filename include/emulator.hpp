@@ -31,6 +31,7 @@ private:
     uint8_t _get_code8(uint32_t index);
     int8_t _get_sign_code8(uint32_t index);
     uint32_t _get_code32(uint32_t index);
+    int32_t _get_sign_code32(uint32_t index);
 
 public:
     emulator(uint32_t memory_size, uint32_t init_eip, uint32_t init_esp);
@@ -38,13 +39,14 @@ public:
     
     void dump_registers();
     
-    void load_program(const char *filename, uint32_t size);
+    void load_program(const char *filename, uint32_t size, uint32_t index = 0);
     bool exec();
 
 private:
     //instructions
     void _mov_r32_imm32();
     void _short_jump();
+    void _near_jump();
 };
 
 #endif

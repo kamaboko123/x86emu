@@ -18,10 +18,11 @@ void emulator::_init_instructions(){
     for(int i = 0; i < 8; i++){
         instructions[0xB8 + i] = &emulator::_mov_r32_imm32;
     }
+    instructions[0xE9] = &emulator::_near_jump;
     instructions[0xEB] = &emulator::_short_jump;
 };
 
-void emulator::load_program(const char *filename, uint32_t size){
+void emulator::load_program(const char *filename, uint32_t size, uint32_t index){
     FILE *binary;
     
     binary = fopen(filename, "rb");
@@ -29,7 +30,7 @@ void emulator::load_program(const char *filename, uint32_t size){
         fprintf(stderr, "error : failed to read program file.\n");
         exit(-1);
     }
-    fread(memory, 1, size, binary);
+    fread(memory + index, 1, size, binary);
     fclose(binary);
 }
 
@@ -48,6 +49,7 @@ void emulator::dump_registers(){
 
 bool emulator::exec(){
     uint8_t code = _get_code8(0);
+    
     (this->*instructions[code])();
     
     if(eip == 0x00) return false;
@@ -70,6 +72,10 @@ uint32_t emulator::_get_code32(uint32_t index){
     return ret;
 }
 
+int32_t emulator::_get_sign_code32(uint32_t index){
+    return _get_code32(index);
+}
+
 void emulator::_mov_r32_imm32(){
     uint8_t reg = _get_code8(0) - 0xB8;
     registers[reg] = _get_code32(1);
@@ -77,6 +83,15 @@ void emulator::_mov_r32_imm32(){
 }
 void emulator::_short_jump(){
     int8_t diff = _get_sign_code8(1);
+    //opecode(1byte) + operand(1byte)
     eip += 2;
     eip += diff;
 }
+
+void emulator::_near_jump(){
+    int32_t diff = _get_sign_code32(1);
+    //opecode(1byte) + operand(4byte)
+    eip += 5;
+    eip += diff;
+}
+

@@ -55,9 +55,9 @@ $(TEST_OBJ_DIR)/%.o: $(TEST_SRC_DIR)/%.cpp
 
 test_asm: $(ASM_TARGET)
 
-$(ASM_TARGET_DIR)/%.bin: $(ASM_SRC)
+$(ASM_TARGET_DIR)/%.bin: $(ASM_SRC_DIR)/%.asm
 	mkdir -p $(ASM_TARGET_DIR)
-	$(AS) -o $@ $<
+	$(AS) -f bin -o $@ $<
 
 clean:
 	rm -rf $(TARGET_DIR) $(OBJ_DIR) $(TEST_TARGET_DIR) $(TEST_OBJ_DIR) $(TEST_RESULT_FILE)
