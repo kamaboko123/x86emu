@@ -37,6 +37,9 @@ ASM_TARGET = $(addprefix $(ASM_TARGET_DIR)/, $(notdir $(ASM_SRC:.asm=.bin)))
 
 all: $(TARGET) test test_asm
 
+test_run: all
+	bin/emu_test
+
 $(TARGET_DIR)/%: $(OBJ)
 	mkdir -p $(TARGET_DIR)
 	$(CC) $(CFLAGS) -o $@ $^

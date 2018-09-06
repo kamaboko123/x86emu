@@ -18,6 +18,21 @@ enum Register{
     REGISTERS_COUNT
 };
 
+typedef struct{
+    uint8_t mod;
+    union {
+        uint8_t opcode;
+        uint8_t reg_index;
+    };
+    uint8_t rm;
+    
+    uint8_t sib;
+    union{
+        int8_t disp8;
+        uint32_t disp32;
+    };
+} ModRM;
+
 class emulator{
 friend class EmulatorTest;
 private:
