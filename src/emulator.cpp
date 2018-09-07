@@ -1,4 +1,3 @@
-#include <cstdlib>
 #include "emulator.hpp"
 
 emulator::emulator(uint32_t memory_size, uint32_t init_eip, uint32_t init_esp){
@@ -62,6 +61,37 @@ uint8_t emulator::_get_code8(uint32_t index){
 
 int8_t emulator::_get_sign_code8(uint32_t index){
     return memory[eip + index];
+}
+
+void emulator::_parse_modrm(ModRM &modrm){
+    uint8_t code = _get_code8(0);
+    
+    memset(&modrm, 0, sizeof(ModRM));
+    modrm.mod = (code & 0xC0) >> 6;
+    modrm.opecode = (code & 0x38) >> 3;
+    modrm.rm = code & 0x07;
+    
+    eip++;
+    
+    //SIBがある場合はフェッチ
+    if(modrm.mod != 3 && modrm.rm == 4){
+        modrm.sib = _get_code8(0);
+        eip++;
+    }
+    
+    //ディスプレースメント 32bit
+    //(mod == 00, rm == 101)を見落としそうなので注意
+    if((modrm.mod == 0 && modrm.rm == 5) || modrm.mod == 2){
+        modrm.disp32 = _get_sign_code32(0);
+        eip += 4;
+    }
+    //ディスプレースメント 8bit
+    else if(modrm.mod == 1){
+        modrm.disp8 = _get_sign_code8(0);
+        eip++;
+    }
+    
+    //これ以外はレジスタか、メモリアドレスの間接指定(たぶん)
 }
 
 uint32_t emulator::_get_code32(uint32_t index){

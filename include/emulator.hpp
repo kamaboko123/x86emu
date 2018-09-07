@@ -3,6 +3,8 @@
 
 #include <cstdio>
 #include <cstdint>
+#include <cstdlib>
+#include <cstring>
 
 #define INSTRUCTION_NUM 256
 
@@ -21,7 +23,7 @@ enum Register{
 typedef struct{
     uint8_t mod;
     union {
-        uint8_t opcode;
+        uint8_t opecode;
         uint8_t reg_index;
     };
     uint8_t rm;
@@ -47,6 +49,8 @@ private:
     int8_t _get_sign_code8(uint32_t index);
     uint32_t _get_code32(uint32_t index);
     int32_t _get_sign_code32(uint32_t index);
+    
+    void _parse_modrm(ModRM &modrm);
 
 public:
     emulator(uint32_t memory_size, uint32_t init_eip, uint32_t init_esp);
