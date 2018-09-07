@@ -106,6 +106,69 @@ int32_t emulator::_get_sign_code32(uint32_t index){
     return _get_code32(index);
 }
 
+//Mod/RMで指定されたレジスタ・メモリに値を格納する
+void emulator::_set_rm32(ModRM &modrm, uint32_t value){
+    //レジスタ指定
+    if(modrm.mod == 3){
+        _set_register32(static_cast<Register>(modrm.rm), value);
+    }
+    //メモリ指定
+    else{
+        //Mod/RMをもとにアドレス計算
+        uint32_t address = _calc_memory_address(modrm);
+        _set_memory32(address, value);
+    }
+}
+
+void emulator::_set_register32(Register reg, uint32_t value){
+    registers[reg] = value;
+}
+
+void emulator::_set_memory32(uint32_t address, uint32_t value){
+    memory[address] = value;
+}
+
+uint32_t emulator::_get_register32(Register reg){
+    return registers[reg];
+}
+
+uint32_t emulator::_calc_memory_address(ModRM &modrm){
+    if(modrm.mod == 0){
+        if(modrm.rm == 4){
+            fprintf(stderr, "error : not implemted instruction. ModRM(mod=%d, rm=%d)\n", modrm.mod, modrm.rm);
+            exit(-1);
+        }
+        else if(modrm.rm == 5){
+            return modrm.disp32;
+        }
+        else{
+            return _get_register32(static_cast<Register>(modrm.rm));
+        }
+    }
+    else if(modrm.mod == 1){
+        if(modrm.rm == 4){
+            fprintf(stderr, "error : not implemted instruction. ModRM(mod=%d, rm=%d)\n", modrm.mod, modrm.rm);
+            exit(-1);
+        }
+        else{
+            return _get_register32(static_cast<Register>(modrm.rm)) + modrm.disp8;
+        }
+    }
+    else if(modrm.mod == 2){
+        if(modrm.rm == 4){
+            fprintf(stderr, "error : not implemted instruction. ModRM(mod=%d, rm=%d)\n", modrm.mod, modrm.rm);
+            exit(-1);
+        }
+        else{
+            return _get_register32(static_cast<Register>(modrm.rm)) + modrm.disp32;
+        }
+    }
+    else{
+        fprintf(stderr, "error : not implemted instruction. ModRM(mod=%d, rm=%d)\n", modrm.mod, modrm.rm);
+        exit(-1);
+    }
+}
+
 void emulator::_mov_r32_imm32(){
     uint8_t reg = _get_code8(0) - 0xB8;
     registers[reg] = _get_code32(1);
@@ -123,5 +186,16 @@ void emulator::_near_jump(){
     //opecode(1byte) + operand(4byte)
     eip += 5;
     eip += diff;
+}
+
+void emulator::_mov_rm32_imm32(){
+    eip++;
+    ModRM modrm;
+    _parse_modrm(modrm);
+    
+    uint32_t value = _get_code32(0);
+    eip += 4;
+    
+    _set_rm32(modrm, value);
 }
 

@@ -51,7 +51,15 @@ private:
     int32_t _get_sign_code32(uint32_t index);
     
     void _parse_modrm(ModRM &modrm);
-
+    void _set_rm32(ModRM &modrm, uint32_t value);
+    
+    void _set_register32(Register reg, uint32_t value);
+    void _set_memory32(uint32_t address, uint32_t value);
+    
+    uint32_t _get_register32(Register reg);
+    
+    uint32_t _calc_memory_address(ModRM &modrm);
+    
 public:
     emulator(uint32_t memory_size, uint32_t init_eip, uint32_t init_esp);
     ~emulator();
@@ -66,6 +74,8 @@ private:
     void _mov_r32_imm32();
     void _short_jump();
     void _near_jump();
+    
+    void _mov_rm32_imm32();
 };
 
 #endif
