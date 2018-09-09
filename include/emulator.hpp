@@ -54,7 +54,9 @@ private:
     void _set_rm32(ModRM &modrm, uint32_t value);
     
     void _set_register32(Register reg, uint32_t value);
+    void _set_memory8(uint32_t address, uint8_t value);
     void _set_memory32(uint32_t address, uint32_t value);
+    uint8_t _get_memory8(uint32_t address);
     uint32_t _get_memory32(uint32_t address);
     
     uint32_t _get_register32(Register reg);

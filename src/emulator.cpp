@@ -127,16 +127,30 @@ void emulator::_set_register32(Register reg, uint32_t value){
     registers[reg] = value;
 }
 
-void emulator::_set_memory32(uint32_t address, uint32_t value){
+void emulator::_set_memory8(uint32_t address, uint8_t value){
     memory[address] = value;
 }
 
-//REVIEW
-uint32_t emulator::_get_memory32(uint32_t address){
+void emulator::_set_memory32(uint32_t address, uint32_t value){
+    uint32_t mask = 0xFF;
+    
+    for(int i = 0; i < 4; i++){
+        memory[address + i] = (value & (mask << (i * 8))) >> i;
+    }
+}
+
+uint8_t emulator::_get_memory8(uint32_t address){
     return(memory[address]);
 }
 
-//REVIEW
+uint32_t emulator::_get_memory32(uint32_t address){
+    uint32_t value = 0;
+    for(int i = 0; i < 4; i++){
+        value += (uint32_t)memory[address + i] << (3 - i);
+    }
+    return(value);
+}
+
 uint32_t emulator::_get_register32(Register reg){
     return registers[reg];
 }
