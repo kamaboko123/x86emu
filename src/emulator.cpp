@@ -17,6 +17,9 @@ void emulator::_init_instructions(){
     for(int i = 0; i < 8; i++){
         instructions[0xB8 + i] = &emulator::_mov_r32_imm32;
     }
+    instructions[0x89] = &emulator::_mov_rm32_r32;
+    instructions[0x8B] = &emulator::_mov_r32_rm32;
+    
     instructions[0xE9] = &emulator::_near_jump;
     instructions[0xEB] = &emulator::_short_jump;
 };
@@ -128,8 +131,32 @@ void emulator::_set_memory32(uint32_t address, uint32_t value){
     memory[address] = value;
 }
 
+//REVIEW
+uint32_t emulator::_get_memory32(uint32_t address){
+    return(memory[address]);
+}
+
+//REVIEW
 uint32_t emulator::_get_register32(Register reg){
     return registers[reg];
+}
+
+uint32_t emulator::_get_r32(ModRM &modrm){
+    return(_get_register32(static_cast<Register>(modrm.reg_index)));
+}
+
+void emulator::_set_r32(ModRM &modrm, uint32_t value){
+    _set_register32(static_cast<Register>(modrm.reg_index), value);
+}
+
+uint32_t emulator::_get_rm32(ModRM &modrm){
+    if(modrm.mod == 3){
+        return(_get_register32(static_cast<Register>(modrm.reg_index)));
+    }
+    else{
+        uint32_t address = _calc_memory_address(modrm);
+        return(_get_memory32(address));
+    }
 }
 
 uint32_t emulator::_calc_memory_address(ModRM &modrm){
@@ -197,5 +224,24 @@ void emulator::_mov_rm32_imm32(){
     eip += 4;
     
     _set_rm32(modrm, value);
+}
+
+void emulator::_mov_rm32_r32(){
+    eip++;
+    ModRM modrm;
+    _parse_modrm(modrm);
+    
+    uint32_t value = _get_r32(modrm);
+    _set_rm32(modrm, value);
+}
+
+
+void emulator::_mov_r32_rm32(){
+    eip++;
+    ModRM modrm;
+    _parse_modrm(modrm);
+    
+    uint32_t value = _get_rm32(modrm);
+    _set_r32(modrm, value);
 }
 

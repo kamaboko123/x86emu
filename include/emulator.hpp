@@ -55,10 +55,15 @@ private:
     
     void _set_register32(Register reg, uint32_t value);
     void _set_memory32(uint32_t address, uint32_t value);
+    uint32_t _get_memory32(uint32_t address);
     
     uint32_t _get_register32(Register reg);
     
     uint32_t _calc_memory_address(ModRM &modrm);
+    
+    uint32_t _get_r32(ModRM &modrm);
+    void _set_r32(ModRM &modrm, uint32_t value);
+    uint32_t _get_rm32(ModRM &modrm);
     
 public:
     emulator(uint32_t memory_size, uint32_t init_eip, uint32_t init_esp);
@@ -75,7 +80,10 @@ private:
     void _short_jump();
     void _near_jump();
     
+    //mov with ModRM
     void _mov_rm32_imm32();
+    void _mov_rm32_r32();
+    void _mov_r32_rm32();
 };
 
 #endif
