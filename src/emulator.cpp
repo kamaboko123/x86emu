@@ -14,14 +14,16 @@ emulator::~emulator(){
 }
 
 void emulator::_init_instructions(){
+    instructions[0x01] = &emulator::_add_rm32_r32;
     for(int i = 0; i < 8; i++){
         instructions[0xB8 + i] = &emulator::_mov_r32_imm32;
     }
+    instructions[0x83] = &emulator::_code_83;
     instructions[0x89] = &emulator::_mov_rm32_r32;
     instructions[0x8B] = &emulator::_mov_r32_rm32;
-    
     instructions[0xE9] = &emulator::_near_jump;
     instructions[0xEB] = &emulator::_short_jump;
+    instructions[0xFF] = &emulator::_code_ff;
 };
 
 void emulator::load_program(const char *filename, uint32_t size, uint32_t index){
@@ -259,3 +261,56 @@ void emulator::_mov_r32_rm32(){
     _set_r32(modrm, value);
 }
 
+void emulator::_add_rm32_r32(){
+    eip++;
+    ModRM modrm;
+    _parse_modrm(modrm);
+    
+    uint32_t rm32 = _get_rm32(modrm);
+    uint32_t r32 = _get_r32(modrm);
+    
+    _set_rm32(modrm, rm32 + r32);
+}
+
+void emulator::_code_83(){
+    eip++;
+    ModRM modrm;
+    _parse_modrm(modrm);
+    
+    switch(modrm.opecode){
+        case 5:
+            _sub_rm32_imm8(modrm);
+            break;
+        default:
+            fprintf(stderr, "error : not implemted instruction. ModRM(mod=%d, rm=%d)\n", modrm.mod, modrm.rm);
+            exit(-1);
+    }
+}
+
+void emulator::_sub_rm32_imm8(ModRM &modrm){
+    uint32_t rm32 = _get_rm32(modrm);
+    uint32_t imm8 = _get_sign_code8(0);
+    eip++;
+    
+    _set_rm32(modrm, rm32 - imm8);
+}
+
+void emulator::_code_ff(){
+    eip++;
+    ModRM modrm;
+    _parse_modrm(modrm);
+    
+    switch(modrm.opecode){
+        case 0:
+            _inc_rm32(modrm);
+            break;
+        default:
+            fprintf(stderr, "error : not implemted instruction. ModRM(mod=%d, rm=%d)\n", modrm.mod, modrm.rm);
+            exit(-1);
+    }
+}
+
+void emulator::_inc_rm32(ModRM &modrm){
+    uint32_t rm32 = _get_rm32(modrm);
+    _set_rm32(modrm, ++rm32);
+}
