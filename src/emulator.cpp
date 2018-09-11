@@ -168,7 +168,7 @@ void emulator::_set_r32(ModRM &modrm, uint32_t value){
 
 uint32_t emulator::_get_rm32(ModRM &modrm){
     if(modrm.mod == 3){
-        return(_get_register32(static_cast<Register>(modrm.reg_index)));
+        return(_get_register32(static_cast<Register>(modrm.rm)));
     }
     else{
         uint32_t address = _calc_memory_address(modrm);

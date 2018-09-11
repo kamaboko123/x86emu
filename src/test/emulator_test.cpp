@@ -92,9 +92,7 @@ void FIXTURE_NAME::test_modrm(){
     CPPUNIT_ASSERT_EQUAL((uint32_t)0x000000, emu.registers[EDI]);
     
     emu.load_program("bin/data/modrm-test.bin", 0x0200, 0x7c00);
-    while(emu.exec()){
-        printf("!\n");
-    }
+    while(emu.exec());
     
     CPPUNIT_ASSERT_EQUAL((uint32_t)0x000002, emu.registers[EAX]);
     CPPUNIT_ASSERT_EQUAL((uint32_t)0x000000, emu.registers[ECX]);
