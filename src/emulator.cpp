@@ -27,7 +27,7 @@ void emulator::_init_instructions(){
     instructions[0xFF] = &emulator::_code_ff;
 };
 
-void emulator::load_program(const char *filename, uint32_t size, uint32_t index){
+void emulator::load_program(const char *filename, uint32_t size){
     FILE *binary;
     
     binary = fopen(filename, "rb");
@@ -35,7 +35,7 @@ void emulator::load_program(const char *filename, uint32_t size, uint32_t index)
         fprintf(stderr, "error : failed to read program file.\n");
         exit(-1);
     }
-    fread(memory + index, 1, size, binary);
+    fread(memory + 0x7c00, 1, size, binary);
     fclose(binary);
 }
 
@@ -56,7 +56,6 @@ bool emulator::exec(){
     uint8_t code = _get_code8(0);
     
     (this->*instructions[code])();
-    
     if(eip == 0x00) return false;
     return true;
 }

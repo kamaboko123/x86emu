@@ -73,7 +73,7 @@ public:
     
     void dump_registers();
     
-    void load_program(const char *filename, uint32_t size, uint32_t index = 0);
+    void load_program(const char *filename, uint32_t size);
     bool exec();
 
 private:

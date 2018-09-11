@@ -6,7 +6,7 @@
 
 int main(int argc, char *argv[]){
     
-    emulator emu(1024*1024, 0x00, 0x7c00);
+    emulator emu(1024*1024, 0x7c00, 0x7c00);
     if(argc != 2){
         fprintf(stderr, "error : you must specify program filename.\n");
         exit(-1);
