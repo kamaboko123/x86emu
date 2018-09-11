@@ -21,6 +21,7 @@ void emulator::_init_instructions(){
     instructions[0x83] = &emulator::_code_83;
     instructions[0x89] = &emulator::_mov_rm32_r32;
     instructions[0x8B] = &emulator::_mov_r32_rm32;
+    instructions[0xC7] = &emulator::_mov_rm32_imm32;
     instructions[0xE9] = &emulator::_near_jump;
     instructions[0xEB] = &emulator::_short_jump;
     instructions[0xFF] = &emulator::_code_ff;
