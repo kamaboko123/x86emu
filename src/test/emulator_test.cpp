@@ -73,8 +73,8 @@ void FIXTURE_NAME::test_modrm(){
     CPPUNIT_ASSERT_EQUAL((uint32_t)0x000000, emu.registers[EBX]);
     CPPUNIT_ASSERT_EQUAL((uint32_t)0x007bf0, emu.registers[ESP]);
     CPPUNIT_ASSERT_EQUAL((uint32_t)0x007bf0, emu.registers[EBP]);
-    CPPUNIT_ASSERT_EQUAL((uint32_t)0x000008, emu.registers[ESI]);
-    CPPUNIT_ASSERT_EQUAL((uint32_t)0x000000, emu.registers[EDI]);
+    CPPUNIT_ASSERT_EQUAL((uint32_t)0x000007, emu.registers[ESI]);
+    CPPUNIT_ASSERT_EQUAL((uint32_t)0x000008, emu.registers[EDI]);
 }
 
 
