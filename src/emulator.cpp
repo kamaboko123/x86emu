@@ -312,3 +312,16 @@ void emulator::_inc_rm32(ModRM &modrm){
     uint32_t rm32 = _get_rm32(modrm);
     _set_rm32(modrm, ++rm32);
 }
+
+void emulator::_push32(Register reg, uint32_t value){
+    uint32_t address = _get_register32(ESP) - 4;
+    _set_register32(ESP, address);
+    _set_memory32(address, value);
+}
+
+void emulator::_push_r32(){
+    Register reg = static_cast<Register>(_get_code8(0) - 0x50);
+    uint32_t value = _get_register32(reg);
+    _push32(reg, value);
+}
+
