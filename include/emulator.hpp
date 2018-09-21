@@ -67,7 +67,7 @@ private:
     void _set_r32(ModRM &modrm, uint32_t value);
     uint32_t _get_rm32(ModRM &modrm);
     
-    void _push32(Register reg, uint32_t value);
+    void _push32(uint32_t value);
     uint32_t _pop32();
     
 public:
@@ -100,6 +100,9 @@ private:
     
     void _push_r32();
     void _pop_r32();
+    
+    void _call_rel32();
+    void _ret();
 };
 
 #endif
