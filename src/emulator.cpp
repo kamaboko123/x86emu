@@ -17,11 +17,16 @@ void emulator::_init_instructions(){
     instructions[0x01] = &emulator::_add_rm32_r32;
     for(int i = 0; i < 8; i++){
         instructions[0xB8 + i] = &emulator::_mov_r32_imm32;
+        instructions[0x50 + i] = &emulator::_push_r32;
+        instructions[0x58 + i] = &emulator::_pop_r32;
     }
     instructions[0x83] = &emulator::_code_83;
     instructions[0x89] = &emulator::_mov_rm32_r32;
     instructions[0x8B] = &emulator::_mov_r32_rm32;
+    instructions[0xC3] = &emulator::_ret;
     instructions[0xC7] = &emulator::_mov_rm32_imm32;
+    instructions[0xC7] = &emulator::_mov_rm32_imm32;
+    instructions[0xE8] = &emulator::_call_rel32;
     instructions[0xE9] = &emulator::_near_jump;
     instructions[0xEB] = &emulator::_short_jump;
     instructions[0xFF] = &emulator::_code_ff;

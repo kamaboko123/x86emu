@@ -83,7 +83,7 @@ void FIXTURE_NAME::test_call(){
     CPPUNIT_ASSERT_EQUAL((uint32_t)0x000000, emu.registers[EDX]);
     CPPUNIT_ASSERT_EQUAL((uint32_t)0x000029, emu.registers[EBX]);
     CPPUNIT_ASSERT_EQUAL((uint32_t)0x007c00, emu.registers[ESP]);
-    CPPUNIT_ASSERT_EQUAL((uint32_t)0x007000, emu.registers[EBP]);
+    CPPUNIT_ASSERT_EQUAL((uint32_t)0x000000, emu.registers[EBP]);
     CPPUNIT_ASSERT_EQUAL((uint32_t)0x000000, emu.registers[ESI]);
     CPPUNIT_ASSERT_EQUAL((uint32_t)0x000000, emu.registers[EDI]);
 }
