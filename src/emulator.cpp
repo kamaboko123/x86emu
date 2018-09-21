@@ -321,6 +321,7 @@ void emulator::_push32(Register reg, uint32_t value){
 
 void emulator::_push_r32(){
     Register reg = static_cast<Register>(_get_code8(0) - 0x50);
+    eip++;
     uint32_t value = _get_register32(reg);
     _push32(reg, value);
 }
