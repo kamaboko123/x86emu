@@ -325,3 +325,18 @@ void emulator::_push_r32(){
     _push32(reg, value);
 }
 
+uint32_t emulator::_pop32(){
+    uint32_t address = _get_register32(ESP);
+    uint32_t value = _get_memory32(address);
+    _set_register32(ESP, address + 4);
+    
+    return(value);
+}
+
+void emulator::_pop_r32(){
+    Register reg = static_cast<Register>(_get_code8(0) - 0x58);
+    eip++;
+    _set_register32(reg, _pop32());
+}
+
+

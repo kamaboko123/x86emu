@@ -68,6 +68,7 @@ private:
     uint32_t _get_rm32(ModRM &modrm);
     
     void _push32(Register reg, uint32_t value);
+    uint32_t _pop32();
     
 public:
     emulator(uint32_t memory_size, uint32_t init_eip, uint32_t init_esp);
@@ -98,6 +99,7 @@ private:
     void _inc_rm32(ModRM &modrm);
     
     void _push_r32();
+    void _pop_r32();
 };
 
 #endif
