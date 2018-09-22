@@ -1,5 +1,5 @@
 TARGET_DIR = ../../../../../bin/data
-TMP_DIR = $(TARGET_DIR)/tmp/arg-test
+TMP_DIR = $(TARGET_DIR)/tmp/c-test
 TARGET = $(TARGET_DIR)/c-test.bin
 OBJS = crt0.o test.o
 
