@@ -6,7 +6,7 @@
 #include <cstdlib>
 #include <cstring>
 
-#define INSTRUCTION_NUM 256
+const int INSTRUCTION_NUM = 256;
 
 enum Register{
     EAX,

@@ -14,6 +14,8 @@ emulator::~emulator(){
 }
 
 void emulator::_init_instructions(){
+    for (int i = 0; i < INSTRUCTION_NUM; i++) instructions[i] = 0;
+    
     instructions[0x01] = &emulator::_add_rm32_r32;
     for(int i = 0; i < 8; i++){
         instructions[0xB8 + i] = &emulator::_mov_r32_imm32;
