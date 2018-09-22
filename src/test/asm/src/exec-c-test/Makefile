@@ -16,7 +16,7 @@ $(TARGET) : crt0.asm test.c
 	mkdir -p $(TARGET_DIR)/tmp
 	$(CC) $(CFLAGS) -c -o $(TARGET_DIR)/tmp/test.o test.c
 	$(AS) -f elf crt0.asm -o $(TARGET_DIR)/tmp/crt0.o
-	$(LD) $(LDFLAGS) -o $@ $(TARGET_DIR)/tmp/test.o  $(TARGET_DIR)/tmp/crt0.o
+	$(LD) $(LDFLAGS) -o $@ $(TARGET_DIR)/tmp/crt0.o $(TARGET_DIR)/tmp/test.o
 
 clean:
 	rm -rf $(TARGET)
