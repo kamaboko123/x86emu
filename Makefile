@@ -33,6 +33,8 @@ ASM_SRC = $(wildcard $(ASM_SRC_DIR)/*.asm)
 ASM_TARGET_DIR = bin/data
 ASM_TARGET = $(addprefix $(ASM_TARGET_DIR)/, $(notdir $(ASM_SRC:.asm=.bin)))
 
+LD = ld
+
 .SECONDARY: $(OBJ)
 
 all: $(TARGET) test test_asm
@@ -56,7 +58,7 @@ $(TEST_OBJ_DIR)/%.o: $(TEST_SRC_DIR)/%.cpp
 	mkdir -p $(TEST_OBJ_DIR)
 	$(CC) $(CFLAGS) $(INCLUDE) -D RESULT_FILE=\"$(TEST_RESULT_FILE)\" -o $@ -c $<
 
-test_asm: $(ASM_TARGET)
+test_asm: $(ASM_TARGET) test_exec-c
 
 $(ASM_TARGET_DIR)/%.bin: $(ASM_SRC_DIR)/%.asm
 	mkdir -p $(ASM_TARGET_DIR)
@@ -65,4 +67,6 @@ $(ASM_TARGET_DIR)/%.bin: $(ASM_SRC_DIR)/%.asm
 clean:
 	rm -rf $(TARGET_DIR) $(OBJ_DIR) $(TEST_TARGET_DIR) $(TEST_OBJ_DIR) $(TEST_RESULT_FILE)
 
+test_exec-c:
+	sh -c 'cd src/test/asm/src/exec-c-test; make'
 
