@@ -100,6 +100,8 @@ private:
     void _inc_rm32(ModRM &modrm);
     
     void _push_r32();
+    void _push_imm8();
+    void _push_imm32();
     void _pop_r32();
     
     void _call_rel32();

@@ -22,6 +22,8 @@ void emulator::_init_instructions(){
         instructions[0x50 + i] = &emulator::_push_r32;
         instructions[0x58 + i] = &emulator::_pop_r32;
     }
+    instructions[0x6A] = &emulator::_push_imm8;
+    instructions[0x68] = &emulator::_push_imm8;
     instructions[0x83] = &emulator::_code_83;
     instructions[0x89] = &emulator::_mov_rm32_r32;
     instructions[0x8B] = &emulator::_mov_r32_rm32;
@@ -353,6 +355,18 @@ void emulator::_push_r32(){
     _push32(value);
 }
 
+void emulator::_push_imm8(){
+    uint8_t value = _get_code8(1);
+    _push32(value);
+    eip += 2;
+}
+
+void emulator::_push_imm32(){
+    uint32_t value = _get_code32(1);
+    _push32(value);
+    eip += 5;
+}
+
 uint32_t emulator::_pop32(){
     uint32_t address = _get_register32(ESP);
     uint32_t value = _get_memory32(address);
@@ -366,7 +380,6 @@ void emulator::_pop_r32(){
     eip++;
     _set_register32(reg, _pop32());
 }
-
 
 void emulator::_call_rel32(){
     uint32_t diff = _get_sign_code32(1);
