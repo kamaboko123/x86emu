@@ -94,6 +94,7 @@ private:
     
     void _code_83();
     void _sub_rm32_imm8(ModRM &modrm);
+    void _add_rm32_imm8(ModRM &modrm);
     
     void _code_ff();
     void _inc_rm32(ModRM &modrm);

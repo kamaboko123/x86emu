@@ -60,7 +60,15 @@ void emulator::dump_registers(){
 bool emulator::exec(){
     uint8_t code = _get_code8(0);
     
-    (this->*instructions[code])();
+    void (emulator::*ins)() = instructions[code];
+    if(ins == NULL){
+        fprintf(stderr, "error : not implemted instruction. code=0x%02x\n", code);
+        exit(-1);
+    }
+    
+    //fprintf(stderr, "[exec]code=0x%02x\n", code);
+    (this->*ins)();
+    
     if(eip == 0x00) return false;
     return true;
 }
@@ -282,6 +290,9 @@ void emulator::_code_83(){
     _parse_modrm(modrm);
     
     switch(modrm.opecode){
+        case 0:
+            _add_rm32_imm8(modrm);
+            break;
         case 5:
             _sub_rm32_imm8(modrm);
             break;
@@ -297,6 +308,14 @@ void emulator::_sub_rm32_imm8(ModRM &modrm){
     eip++;
     
     _set_rm32(modrm, rm32 - imm8);
+}
+
+void emulator::_add_rm32_imm8(ModRM &modrm){
+    uint32_t rm32 = _get_rm32(modrm);
+    uint32_t imm8 = _get_sign_code8(0);
+    eip++;
+    
+    _set_rm32(modrm, rm32 + imm8);
 }
 
 void emulator::_code_ff(){
