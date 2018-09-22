@@ -1,6 +1,6 @@
 TARGET_DIR = ../../../../../bin/data
 TMP_DIR = $(TARGET_DIR)/tmp/arg-test
-TARGET = $(TARGET_DIR)/c-test.bin
+TARGET = $(TARGET_DIR)/arg-test.bin
 OBJS = crt0.o test.o
 
 CC = gcc
@@ -21,3 +21,4 @@ $(TARGET) : crt0.asm test.c
 
 clean:
 	rm -rf $(TARGET)
+

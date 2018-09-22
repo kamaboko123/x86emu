@@ -13,6 +13,7 @@ class FIXTURE_NAME : public CPPUNIT_NS::TestFixture {
     CPPUNIT_TEST(test_modrm);
     CPPUNIT_TEST(test_call);
     CPPUNIT_TEST(test_c);
+    CPPUNIT_TEST(test_arg);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -24,6 +25,7 @@ protected:
     void test_modrm();
     void test_call();;
     void test_c();;
+    void test_arg();;
 };
 
 CPPUNIT_TEST_SUITE_REGISTRATION(FIXTURE_NAME);
@@ -104,3 +106,19 @@ void FIXTURE_NAME::test_c(){
     CPPUNIT_ASSERT_EQUAL((uint32_t)0x000000, emu.registers[ESI]);
     CPPUNIT_ASSERT_EQUAL((uint32_t)0x000000, emu.registers[EDI]);
 }
+
+void FIXTURE_NAME::test_arg(){
+    emulator emu(1024 * 1024, 0x7c00, 0x7c00);
+    emu.load_program("bin/data/arg-test.bin", 0x0200);
+    while(emu.exec());
+    
+    CPPUNIT_ASSERT_EQUAL((uint32_t)0x000007, emu.registers[EAX]);
+    CPPUNIT_ASSERT_EQUAL((uint32_t)0x000000, emu.registers[ECX]);
+    CPPUNIT_ASSERT_EQUAL((uint32_t)0x000002, emu.registers[EDX]);
+    CPPUNIT_ASSERT_EQUAL((uint32_t)0x000000, emu.registers[EBX]);
+    CPPUNIT_ASSERT_EQUAL((uint32_t)0x007c00, emu.registers[ESP]);
+    CPPUNIT_ASSERT_EQUAL((uint32_t)0x000000, emu.registers[EBP]);
+    CPPUNIT_ASSERT_EQUAL((uint32_t)0x000000, emu.registers[ESI]);
+    CPPUNIT_ASSERT_EQUAL((uint32_t)0x000000, emu.registers[EDI]);
+}
+
