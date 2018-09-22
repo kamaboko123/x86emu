@@ -103,6 +103,8 @@ private:
     
     void _call_rel32();
     void _ret();
+    
+    void _leave();
 };
 
 #endif

@@ -25,7 +25,7 @@ void emulator::_init_instructions(){
     instructions[0x8B] = &emulator::_mov_r32_rm32;
     instructions[0xC3] = &emulator::_ret;
     instructions[0xC7] = &emulator::_mov_rm32_imm32;
-    instructions[0xC7] = &emulator::_mov_rm32_imm32;
+    instructions[0xC9] = &emulator::_leave;
     instructions[0xE8] = &emulator::_call_rel32;
     instructions[0xE9] = &emulator::_near_jump;
     instructions[0xEB] = &emulator::_short_jump;
@@ -129,6 +129,7 @@ void emulator::_set_rm32(ModRM &modrm, uint32_t value){
         _set_memory32(address, value);
     }
 }
+
 
 void emulator::_set_register32(Register reg, uint32_t value){
     registers[reg] = value;
@@ -354,5 +355,14 @@ void emulator::_call_rel32(){
 
 void emulator::_ret(){
     eip = _pop32();
+}
+
+void emulator::_leave(){
+    //ESPにEBPを格納
+    //これでPOPすると保存しておいた、呼び出し元のEBPが取得できるのでEBPに格納
+    _set_register32(ESP, _get_register32(EBP));
+    _set_register32(EBP, _pop32());
+    
+    eip++;
 }
 
