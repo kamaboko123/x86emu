@@ -5,6 +5,7 @@ emulator::emulator(uint32_t memory_size, uint32_t init_eip, uint32_t init_esp){
     memory = new uint8_t[memory_size]();
     eip = init_eip;
     registers[ESP] = init_esp;
+    eflags = 0;
     
     _init_instructions();
 }
@@ -17,6 +18,7 @@ void emulator::_init_instructions(){
     for (int i = 0; i < INSTRUCTION_NUM; i++) instructions[i] = 0;
     
     instructions[0x01] = &emulator::_add_rm32_r32;
+    instructions[0x3B] = &emulator::_cmp_r32_rm32;
     for(int i = 0; i < 8; i++){
         instructions[0xB8 + i] = &emulator::_mov_r32_imm32;
         instructions[0x50 + i] = &emulator::_push_r32;
@@ -114,6 +116,54 @@ void emulator::_parse_modrm(ModRM &modrm){
     }
     
     //これ以外はレジスタか、メモリアドレスの間接指定(たぶん)
+}
+
+void emulator::_update_eflags_sub(uint32_t v1, uint32_t v2, uint64_t result){
+    int32_t sign1 = v1 >> 31;
+    int32_t sign2 = v2 >> 31;
+    
+    int signr = (result >> 31) & 1;
+    
+    _set_carry(result >> 32);
+    _set_zero(result == 0);
+    _set_sign(signr);
+    _set_overflow((sign1 != sign2) && (signr != signr));
+}
+
+void emulator::_set_carry(int flag){
+    if(flag){
+        eflags |= CARRY_FLAG;
+    }
+    else{
+        eflags &= ~CARRY_FLAG;
+    }
+}
+
+void emulator::_set_zero(int flag){
+    if(flag){
+        eflags |= ZERO_FLAG;
+    }
+    else{
+        eflags &= ~ZERO_FLAG;
+    }
+}
+
+void emulator::_set_sign(int flag){
+    if(flag){
+        eflags |= SIGN_FLAG;
+    }
+    else{
+        eflags &= ~SIGN_FLAG;
+    }
+}
+
+void emulator::_set_overflow(int flag){
+    if(flag){
+        eflags |= OVERFLOW_FLAG;
+    }
+    else{
+        eflags &= ~OVERFLOW_FLAG;
+    }
 }
 
 uint32_t emulator::_get_code32(uint32_t index){
@@ -300,19 +350,23 @@ void emulator::_code_83(){
         case 5:
             _sub_rm32_imm8(modrm);
             break;
+        case 7:
+            _cmp_rm32_imm8(modrm);
+            break;
         default:
             fprintf(stderr, "error : not implemted instruction. ModRM(mod=%d, rm=%d)\n", modrm.mod, modrm.rm);
             exit(-1);
     }
 }
 
+/*
 void emulator::_sub_rm32_imm8(ModRM &modrm){
     uint32_t rm32 = _get_rm32(modrm);
     uint32_t imm8 = _get_sign_code8(0);
     eip++;
     
     _set_rm32(modrm, rm32 - imm8);
-}
+}*/
 
 void emulator::_add_rm32_imm8(ModRM &modrm){
     uint32_t rm32 = _get_rm32(modrm);
@@ -400,3 +454,37 @@ void emulator::_leave(){
     eip++;
 }
 
+void emulator::_cmp_r32_rm32(){
+    eip++;
+    ModRM modrm;
+    _parse_modrm(modrm);
+    
+    uint32_t r32 = _get_r32(modrm);
+    uint32_t rm32 = _get_rm32(modrm);
+    
+    uint64_t result = static_cast<uint64_t>(r32) - static_cast<uint64_t>(rm32);
+    
+    _update_eflags_sub(r32, rm32, result);
+}
+
+//call from _code_83
+void emulator::_cmp_rm32_imm8(ModRM &modrm){
+    uint32_t rm32 = _get_rm32(modrm);
+    uint32_t imm8 = static_cast<uint32_t>(_get_sign_code8(0));
+    eip++;
+    
+    uint64_t result = static_cast<uint64_t>(rm32) - static_cast<uint64_t>(imm8);
+    
+    _update_eflags_sub(rm32, imm8, result);
+}
+
+void emulator::_sub_rm32_imm8(ModRM &modrm){
+    uint32_t rm32 = _get_rm32(modrm);
+    uint32_t imm8 = _get_sign_code8(0);
+    eip++;
+    
+    uint64_t result = static_cast<uint64_t>(rm32) - imm8;
+    _set_rm32(modrm, result);
+    
+    _update_eflags_sub(rm32, imm8, result);
+}

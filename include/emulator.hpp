@@ -7,6 +7,11 @@
 #include <cstring>
 
 const int INSTRUCTION_NUM = 256;
+const uint32_t CARRY_FLAG = 1;
+const uint32_t ZERO_FLAG = (1 << 6);
+const uint32_t SIGN_FLAG = (1 << 7);
+const uint32_t OVERFLOW_FLAG = (1 << 11);
+
 
 enum Register{
     EAX,
@@ -40,6 +45,7 @@ friend class EmulatorTest;
 private:
     uint8_t *memory;
     uint32_t eip;
+    uint32_t eflags;
     uint32_t registers[REGISTERS_COUNT];
     void (emulator::*instructions[INSTRUCTION_NUM])();
     
@@ -69,6 +75,13 @@ private:
     
     void _push32(uint32_t value);
     uint32_t _pop32();
+    
+    void _update_eflags_sub(uint32_t v1, uint32_t v2, uint64_t result);
+    
+    void _set_carry(int flag);
+    void _set_zero(int flag);
+    void _set_sign(int flag);
+    void _set_overflow(int flag);
     
 public:
     emulator(uint32_t memory_size, uint32_t init_eip, uint32_t init_esp);
@@ -108,6 +121,11 @@ private:
     void _ret();
     
     void _leave();
+    
+    //cmp
+    void _cmp_r32_rm32();
+    void _cmp_rm32_imm8(ModRM &modrm);
+    //void _sub_rm32_imm8(ModRM &modrm);
 };
 
 #endif
