@@ -26,6 +26,18 @@ void emulator::_init_instructions(){
     }
     instructions[0x6A] = &emulator::_push_imm8;
     instructions[0x68] = &emulator::_push_imm8;
+   
+    instructions[0x70] = &emulator::_jo;
+    instructions[0x71] = &emulator::_jno;
+    instructions[0x72] = &emulator::_jc;
+    instructions[0x73] = &emulator::_jnc;
+    instructions[0x74] = &emulator::_jz;
+    instructions[0x75] = &emulator::_jnz;
+    instructions[0x78] = &emulator::_js;
+    instructions[0x79] = &emulator::_jns;
+    instructions[0x7C] = &emulator::_jl;
+    instructions[0x7E] = &emulator::_jle;
+    
     instructions[0x83] = &emulator::_code_83;
     instructions[0x89] = &emulator::_mov_rm32_r32;
     instructions[0x8B] = &emulator::_mov_r32_rm32;
