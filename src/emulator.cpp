@@ -41,6 +41,7 @@ void emulator::_init_instructions(){
     instructions[0x83] = &emulator::_code_83;
     instructions[0x89] = &emulator::_mov_rm32_r32;
     instructions[0x8B] = &emulator::_mov_r32_rm32;
+    instructions[0xB0] = &emulator::_mov_r8_imm8;
     instructions[0xC3] = &emulator::_ret;
     instructions[0xC7] = &emulator::_mov_rm32_imm32;
     instructions[0xC9] = &emulator::_leave;
@@ -623,4 +624,12 @@ void emulator::_io_out8(uint16_t address, uint8_t value){
             putchar(value);
             break;
     }
+}
+
+void emulator::_mov_r8_imm8(){
+    uint8_t reg = _get_code8(0) - 0xB0;
+    uint8_t imm8 = _get_code8(1);
+    _set_register8(static_cast<Register>(reg), imm8);
+    
+    eip += 2;
 }
