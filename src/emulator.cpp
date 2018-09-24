@@ -553,7 +553,7 @@ void emulator::_jno(){
 void emulator::_jl(){
     int32_t diff = 0;
     if(_is_sign() != _is_overflow()){
-        _get_sign_code8(1);
+        diff = _get_sign_code8(1);
     }
     eip += diff + 2;
 }
@@ -561,7 +561,7 @@ void emulator::_jl(){
 void emulator::_jle(){
     int32_t diff = 0;
     if(_is_zero() || (_is_sign() != _is_overflow())){
-        _get_sign_code8(1);
+        diff = _get_sign_code8(1);
     }
     eip += diff + 2;
 }
