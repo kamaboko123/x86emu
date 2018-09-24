@@ -231,6 +231,17 @@ void emulator::_set_register32(Register reg, uint32_t value){
     registers[reg] = value;
 }
 
+void emulator::_set_register8(Register reg, uint8_t value){
+    if(reg <= EBX){
+        registers[reg] &= 0xFFFFFF00;
+        registers[reg] |= (uint32_t)value;
+    }
+    else{
+        registers[reg - 4] &= 0xFFFF00FF;
+        registers[reg - 4] |= ((uint32_t)value << 8);
+    }
+}
+
 void emulator::_set_memory8(uint32_t address, uint8_t value){
     memory[address] = value;
 }
@@ -255,6 +266,20 @@ uint32_t emulator::_get_memory32(uint32_t address){
 
 uint32_t emulator::_get_register32(Register reg){
     return registers[reg];
+}
+
+uint8_t emulator::_get_register8(Register reg){
+    //レジスタのindexはenum Registerの定義を参照
+    
+    //EAX(=AL), ECX(=CL), EDX(=DL), EBX(=BL)の場合
+    //下位1byteを取り出す
+    if(reg <= EBX){
+        return registers[reg] & 0x000000FF;
+    }
+    
+    //AL, CL, DL, BLの場合
+    //8-15bitを取り出し
+    return (registers[reg - 4] >> 8) & 0x000000FF;
 }
 
 uint32_t emulator::_get_r32(ModRM &modrm){
@@ -564,4 +589,36 @@ void emulator::_jle(){
         diff = _get_sign_code8(1);
     }
     eip += diff + 2;
+}
+
+void emulator::_in_al_dx(){
+    uint16_t address = _get_register32(EDX) & 0x0000FFFF;
+    uint8_t value = _io_in8(address);
+    _set_register8(AL, value);
+    eip++;
+}
+
+void emulator::_out_dx_al(){
+    uint16_t address = _get_register32(EDX) & 0x0000FFFF;
+    uint8_t value = _get_register8(AL);
+    _io_out8(address, value);
+    eip++;
+}
+
+uint8_t emulator::_io_in8(uint16_t address){
+    switch(address){
+        case 0x03F8:
+            return getchar();
+            break;
+        default:
+            return 0;
+    }
+}
+
+void emulator::_io_out8(uint16_t address, uint8_t value){
+    switch(address){
+        case 0x03F8:
+            putchar(value);
+            break;
+    }
 }

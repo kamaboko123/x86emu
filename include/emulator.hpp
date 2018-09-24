@@ -21,7 +21,16 @@ enum Register{
     EBP,
     ESI,
     EDI,
-    REGISTERS_COUNT
+    REGISTERS_COUNT,
+    
+    AL = EAX,
+    CL = ECX,
+    DL = EDX,
+    BL = EBX,
+    AH = AL + 4,
+    CH = CL + 4,
+    DH = DL + 4,
+    BH = BL + 4
 };
 
 typedef struct{
@@ -59,12 +68,14 @@ private:
     void _set_rm32(ModRM &modrm, uint32_t value);
     
     void _set_register32(Register reg, uint32_t value);
+    void _set_register8(Register reg, uint8_t value);
     void _set_memory8(uint32_t address, uint8_t value);
     void _set_memory32(uint32_t address, uint32_t value);
     uint8_t _get_memory8(uint32_t address);
     uint32_t _get_memory32(uint32_t address);
     
     uint32_t _get_register32(Register reg);
+    uint8_t _get_register8(Register reg);
     
     uint32_t _calc_memory_address(ModRM &modrm);
     
@@ -86,6 +97,9 @@ private:
     bool _is_zero();
     bool _is_sign();
     bool _is_overflow();
+    
+    uint8_t _io_in8(uint16_t address);
+    void _io_out8(uint16_t address, uint8_t value);
     
 public:
     emulator(uint32_t memory_size, uint32_t init_eip, uint32_t init_esp);
@@ -140,6 +154,9 @@ private:
     
     void _jl();
     void _jle();
+    
+    void _in_al_dx();
+    void _out_dx_al();
 };
 
 #endif
