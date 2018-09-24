@@ -159,6 +159,7 @@ private:
     void _out_dx_al();
     
     void _mov_r8_imm8();
+    void _cmp_al_imm8();
 };
 
 #endif

@@ -19,6 +19,7 @@ void emulator::_init_instructions(){
     
     instructions[0x01] = &emulator::_add_rm32_r32;
     instructions[0x3B] = &emulator::_cmp_r32_rm32;
+    instructions[0x3C] = &emulator::_cmp_al_imm8;
     for(int i = 0; i < 8; i++){
         instructions[0xB8 + i] = &emulator::_mov_r32_imm32;
         instructions[0x50 + i] = &emulator::_push_r32;
@@ -630,6 +631,16 @@ void emulator::_mov_r8_imm8(){
     uint8_t reg = _get_code8(0) - 0xB0;
     uint8_t imm8 = _get_code8(1);
     _set_register8(static_cast<Register>(reg), imm8);
+    
+    eip += 2;
+}
+
+void emulator::_cmp_al_imm8(){
+    uint8_t imm8 = _get_code8(1);
+    uint8_t al = _get_register8(AL);
+    
+    uint64_t result = (uint64_t)al - (uint64_t)imm8;
+    _update_eflags_sub(al, imm8, result);
     
     eip += 2;
 }
