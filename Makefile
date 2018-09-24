@@ -61,6 +61,7 @@ $(TEST_OBJ_DIR)/%.o: $(TEST_SRC_DIR)/%.cpp
 test_asm: $(ASM_TARGET)
 	sh -c 'cd src/test/asm/src/exec-c-test; make'
 	sh -c 'cd src/test/asm/src/exec-arg-test; make'
+	sh -c 'cd src/test/asm/src/exec-if-test; make'
 
 $(ASM_TARGET_DIR)/%.bin: $(ASM_SRC_DIR)/%.asm
 	mkdir -p $(ASM_TARGET_DIR)
@@ -69,8 +70,3 @@ $(ASM_TARGET_DIR)/%.bin: $(ASM_SRC_DIR)/%.asm
 clean:
 	rm -rf $(TARGET_DIR) $(OBJ_DIR) $(TEST_TARGET_DIR) $(TEST_OBJ_DIR) $(TEST_RESULT_FILE)
 
-test_exec-c:
-	sh -c 'cd src/test/asm/src/exec-c-test; make'
-
-test_arg:
-	sh -c 'cd src/test/asm/src/arg-test; make'
