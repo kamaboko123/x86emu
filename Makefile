@@ -62,6 +62,7 @@ test_asm: $(ASM_TARGET)
 	sh -c 'cd src/test/asm/src/exec-c-test; make'
 	sh -c 'cd src/test/asm/src/exec-arg-test; make'
 	sh -c 'cd src/test/asm/src/exec-if-test; make'
+	sh -c 'cd src/test/asm/src/exec-while-stmt; make'
 
 $(ASM_TARGET_DIR)/%.bin: $(ASM_SRC_DIR)/%.asm
 	mkdir -p $(ASM_TARGET_DIR)

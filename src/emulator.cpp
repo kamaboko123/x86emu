@@ -73,6 +73,14 @@ void emulator::dump_registers(){
     fprintf(stderr, "[ESI] %08x\n", registers[ESI]);
     fprintf(stderr, "[EDI] %08x\n", registers[EDI]);
     fprintf(stderr, "-----------------------\n");
+    fprintf(stderr, "frags : %c%c%c%c\n",
+        _is_carry() ? 'C' : ' ',
+        _is_zero() ? 'Z' : ' ',
+        _is_sign() ? 'S' : ' ',
+        _is_overflow() ? 'O' : ' '
+    );
+    fprintf(stderr, "-----------------------\n");
+    fprintf(stderr, "\n");
 }
 
 bool emulator::exec(){
