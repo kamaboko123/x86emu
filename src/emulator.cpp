@@ -47,6 +47,8 @@ void emulator::_init_instructions(){
     instructions[0xE8] = &emulator::_call_rel32;
     instructions[0xE9] = &emulator::_near_jump;
     instructions[0xEB] = &emulator::_short_jump;
+    instructions[0xEC] = &emulator::_in_al_dx;
+    instructions[0xEE] = &emulator::_out_dx_al;
     instructions[0xFF] = &emulator::_code_ff;
 };
 
