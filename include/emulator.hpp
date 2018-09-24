@@ -12,7 +12,6 @@ const uint32_t ZERO_FLAG = (1 << 6);
 const uint32_t SIGN_FLAG = (1 << 7);
 const uint32_t OVERFLOW_FLAG = (1 << 11);
 
-
 enum Register{
     EAX,
     ECX,
@@ -83,6 +82,11 @@ private:
     void _set_sign(int flag);
     void _set_overflow(int flag);
     
+    bool _is_carry();
+    bool _is_zero();
+    bool _is_sign();
+    bool _is_overflow();
+    
 public:
     emulator(uint32_t memory_size, uint32_t init_eip, uint32_t init_esp);
     ~emulator();
@@ -122,10 +126,20 @@ private:
     
     void _leave();
     
-    //cmp
     void _cmp_r32_rm32();
     void _cmp_rm32_imm8(ModRM &modrm);
-    //void _sub_rm32_imm8(ModRM &modrm);
+    
+    void _jc();
+    void _jz();
+    void _js();
+    void _jo();
+    void _jnc();
+    void _jnz();
+    void _jns();
+    void _jno();
+    
+    void _jl();
+    void _jle();
 };
 
 #endif

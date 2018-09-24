@@ -166,6 +166,20 @@ void emulator::_set_overflow(int flag){
     }
 }
 
+bool emulator::_is_carry(){
+    return((eflags & CARRY_FLAG) != 0);
+}
+bool emulator::_is_zero(){
+    return((eflags & ZERO_FLAG) != 0);
+}
+bool emulator::_is_sign(){
+    return((eflags & SIGN_FLAG) != 0);
+}
+bool emulator::_is_overflow(){
+    return((eflags & OVERFLOW_FLAG) != 0);
+}
+
+
 uint32_t emulator::_get_code32(uint32_t index){
     uint32_t ret = 0;
     for(int i = 0; i < 4; i++){
@@ -336,6 +350,19 @@ void emulator::_add_rm32_r32(){
     uint32_t r32 = _get_r32(modrm);
     
     _set_rm32(modrm, rm32 + r32);
+    
+    //TODO: implement update eflags
+}
+
+void emulator::_sub_rm32_imm8(ModRM &modrm){
+    uint32_t rm32 = _get_rm32(modrm);
+    uint32_t imm8 = _get_sign_code8(0);
+    eip++;
+    
+    uint64_t result = static_cast<uint64_t>(rm32) - imm8;
+    _set_rm32(modrm, result);
+    
+    _update_eflags_sub(rm32, imm8, result);
 }
 
 void emulator::_code_83(){
@@ -358,15 +385,6 @@ void emulator::_code_83(){
             exit(-1);
     }
 }
-
-/*
-void emulator::_sub_rm32_imm8(ModRM &modrm){
-    uint32_t rm32 = _get_rm32(modrm);
-    uint32_t imm8 = _get_sign_code8(0);
-    eip++;
-    
-    _set_rm32(modrm, rm32 - imm8);
-}*/
 
 void emulator::_add_rm32_imm8(ModRM &modrm){
     uint32_t rm32 = _get_rm32(modrm);
@@ -478,13 +496,52 @@ void emulator::_cmp_rm32_imm8(ModRM &modrm){
     _update_eflags_sub(rm32, imm8, result);
 }
 
-void emulator::_sub_rm32_imm8(ModRM &modrm){
-    uint32_t rm32 = _get_rm32(modrm);
-    uint32_t imm8 = _get_sign_code8(0);
-    eip++;
-    
-    uint64_t result = static_cast<uint64_t>(rm32) - imm8;
-    _set_rm32(modrm, result);
-    
-    _update_eflags_sub(rm32, imm8, result);
+void emulator::_jc(){
+    int32_t diff = _is_sign() ? _get_sign_code8(1) : 0;
+    eip += diff + 2;
+}
+void emulator::_jz(){
+    int32_t diff = _is_zero() ? _get_sign_code8(1) : 0;
+    eip += diff + 2;
+}
+void emulator::_js(){
+    int32_t diff = _is_sign() ? _get_sign_code8(1) : 0;
+    eip += diff + 2;
+}
+void emulator::_jo(){
+    int32_t diff = _is_overflow() ? _get_sign_code8(1) : 0;
+    eip += diff + 2;
+}
+
+void emulator::_jnc(){
+    int32_t diff = _is_sign() ? 0 : _get_sign_code8(1);
+    eip += diff + 2;
+}
+void emulator::_jnz(){
+    int32_t diff = _is_zero() ? 0 : _get_sign_code8(1);
+    eip += diff + 2;
+}
+void emulator::_jns(){
+    int32_t diff = _is_sign() ? 0 : _get_sign_code8(1);
+    eip += diff + 2;
+}
+void emulator::_jno(){
+    int32_t diff = _is_overflow() ? 0 : _get_sign_code8(1);
+    eip += diff + 2;
+}
+
+void emulator::_jl(){
+    int32_t diff = 0;
+    if(_is_sign() != _is_overflow()){
+        _get_sign_code8(1);
+    }
+    eip += diff + 2;
+}
+
+void emulator::_jle(){
+    int32_t diff = 0;
+    if(_is_zero() || (_is_sign() != _is_overflow())){
+        _get_sign_code8(1);
+    }
+    eip += diff + 2;
 }
