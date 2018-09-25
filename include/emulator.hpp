@@ -66,6 +66,7 @@ private:
     
     void _parse_modrm(ModRM &modrm);
     void _set_rm32(ModRM &modrm, uint32_t value);
+    void _set_rm8(ModRM &modrm, uint8_t value);
     
     void _set_register32(Register reg, uint32_t value);
     void _set_register8(Register reg, uint8_t value);
@@ -80,8 +81,11 @@ private:
     uint32_t _calc_memory_address(ModRM &modrm);
     
     uint32_t _get_r32(ModRM &modrm);
+    uint8_t _get_r8(ModRM &modrm);
     void _set_r32(ModRM &modrm, uint32_t value);
+    void _set_r8(ModRM &modrm, uint8_t value);
     uint32_t _get_rm32(ModRM &modrm);
+    uint8_t _get_rm8(ModRM &modrm);
     
     void _push32(uint32_t value);
     uint32_t _pop32();
@@ -160,6 +164,9 @@ private:
     
     void _mov_r8_imm8();
     void _cmp_al_imm8();
+    void _mov_rm8_r8();
+    void _mov_r8_rm8();
+    void _inc_r32();
 };
 
 #endif

@@ -21,9 +21,10 @@ void emulator::_init_instructions(){
     instructions[0x3B] = &emulator::_cmp_r32_rm32;
     instructions[0x3C] = &emulator::_cmp_al_imm8;
     for(int i = 0; i < 8; i++){
-        instructions[0xB8 + i] = &emulator::_mov_r32_imm32;
+        instructions[0x40 + i] = &emulator::_inc_r32;
         instructions[0x50 + i] = &emulator::_push_r32;
         instructions[0x58 + i] = &emulator::_pop_r32;
+        instructions[0xB8 + i] = &emulator::_mov_r32_imm32;
     }
     instructions[0x6A] = &emulator::_push_imm8;
     instructions[0x68] = &emulator::_push_imm8;
@@ -40,7 +41,9 @@ void emulator::_init_instructions(){
     instructions[0x7E] = &emulator::_jle;
     
     instructions[0x83] = &emulator::_code_83;
+    instructions[0x89] = &emulator::_mov_r8_rm8; //使ってないけど作っちゃったのでとりあえず
     instructions[0x89] = &emulator::_mov_rm32_r32;
+    instructions[0x8A] = &emulator::_mov_r8_rm8;
     instructions[0x8B] = &emulator::_mov_r32_rm32;
     instructions[0xB0] = &emulator::_mov_r8_imm8;
     instructions[0xC3] = &emulator::_ret;
@@ -216,7 +219,7 @@ int32_t emulator::_get_sign_code32(uint32_t index){
     return _get_code32(index);
 }
 
-//Mod/RMで指定されたレジスタ・メモリに値を格納する
+//ModR/Mで指定されたレジスタ・メモリに値を格納する
 void emulator::_set_rm32(ModRM &modrm, uint32_t value){
     //レジスタ指定
     if(modrm.mod == 3){
@@ -227,6 +230,18 @@ void emulator::_set_rm32(ModRM &modrm, uint32_t value){
         //Mod/RMをもとにアドレス計算
         uint32_t address = _calc_memory_address(modrm);
         _set_memory32(address, value);
+    }
+}
+void emulator::_set_rm8(ModRM &modrm, uint8_t value){
+    //レジスタ指定
+    if(modrm.mod == 3){
+        _set_register8(static_cast<Register>(modrm.rm), value);
+    }
+    //メモリ指定
+    else{
+        //Mod/RMをもとにアドレス計算
+        uint32_t address = _calc_memory_address(modrm);
+        _set_memory8(address, value);
     }
 }
 
@@ -290,8 +305,16 @@ uint32_t emulator::_get_r32(ModRM &modrm){
     return(_get_register32(static_cast<Register>(modrm.reg_index)));
 }
 
+uint8_t emulator::_get_r8(ModRM &modrm){
+    return(_get_register8(static_cast<Register>(modrm.reg_index)));
+}
+
 void emulator::_set_r32(ModRM &modrm, uint32_t value){
     _set_register32(static_cast<Register>(modrm.reg_index), value);
+}
+
+void emulator::_set_r8(ModRM &modrm, uint8_t value){
+    _set_register8(static_cast<Register>(modrm.reg_index), value);
 }
 
 uint32_t emulator::_get_rm32(ModRM &modrm){
@@ -301,6 +324,16 @@ uint32_t emulator::_get_rm32(ModRM &modrm){
     else{
         uint32_t address = _calc_memory_address(modrm);
         return(_get_memory32(address));
+    }
+}
+
+uint8_t emulator::_get_rm8(ModRM &modrm){
+    if(modrm.mod == 3){
+        return(_get_register8(static_cast<Register>(modrm.rm)));
+    }
+    else{
+        uint32_t address = _calc_memory_address(modrm);
+        return(_get_memory8(address));
     }
 }
 
@@ -643,4 +676,30 @@ void emulator::_cmp_al_imm8(){
     _update_eflags_sub(al, imm8, result);
     
     eip += 2;
+}
+
+void emulator::_mov_rm8_r8(){
+    eip++;
+    
+    ModRM modrm;
+    _parse_modrm(modrm);
+    
+    uint8_t r8 = _get_r8(modrm);
+    _set_rm8(modrm, r8);
+}
+
+void emulator::_mov_r8_rm8(){
+    eip++;
+    
+    ModRM modrm;
+    _parse_modrm(modrm);
+    
+    uint8_t rm8 = _get_rm8(modrm);
+    _set_r8(modrm, rm8);
+}
+
+void emulator::_inc_r32(){
+    Register reg = static_cast<Register>(_get_code8(0) - 0x40);
+    _set_register32(reg, _get_register32(reg) + 1);
+    eip++;
 }
