@@ -6,6 +6,8 @@
 #include <cstdlib>
 #include <cstring>
 
+const int bios_to_terminal[] = {30, 34 ,32, 36, 31, 35, 33, 37};
+
 const int INSTRUCTION_NUM = 256;
 const uint32_t CARRY_FLAG = 1;
 const uint32_t ZERO_FLAG = (1 << 6);
@@ -167,6 +169,14 @@ private:
     void _mov_rm8_r8();
     void _mov_r8_rm8();
     void _inc_r32();
+    
+    //software interrupt
+    void _swi();
+    
+    //bios video functions
+    void _bios_video();
+    void _put_string(const char *str, size_t n);
+    void _bios_video_teletype();
 };
 
 #endif

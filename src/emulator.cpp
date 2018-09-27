@@ -24,6 +24,7 @@ void emulator::_init_instructions(){
         instructions[0x40 + i] = &emulator::_inc_r32;
         instructions[0x50 + i] = &emulator::_push_r32;
         instructions[0x58 + i] = &emulator::_pop_r32;
+        instructions[0xB0 + i] = &emulator::_mov_r8_imm8;
         instructions[0xB8 + i] = &emulator::_mov_r32_imm32;
     }
     instructions[0x6A] = &emulator::_push_imm8;
@@ -45,10 +46,10 @@ void emulator::_init_instructions(){
     instructions[0x89] = &emulator::_mov_rm32_r32;
     instructions[0x8A] = &emulator::_mov_r8_rm8;
     instructions[0x8B] = &emulator::_mov_r32_rm32;
-    instructions[0xB0] = &emulator::_mov_r8_imm8;
     instructions[0xC3] = &emulator::_ret;
     instructions[0xC7] = &emulator::_mov_rm32_imm32;
     instructions[0xC9] = &emulator::_leave;
+    instructions[0xCD] = &emulator::_swi;
     instructions[0xE8] = &emulator::_call_rel32;
     instructions[0xE9] = &emulator::_near_jump;
     instructions[0xEB] = &emulator::_short_jump;
@@ -702,4 +703,53 @@ void emulator::_inc_r32(){
     Register reg = static_cast<Register>(_get_code8(0) - 0x40);
     _set_register32(reg, _get_register32(reg) + 1);
     eip++;
+}
+
+void emulator::_swi(){
+    uint8_t int_index = _get_code8(1);
+    eip += 2;
+    
+    switch(int_index){
+        case 0x10:
+            _bios_video();
+            break;
+        default:
+            fprintf(stderr, "error : unknown interrupt. int_index=0x%02x\n", int_index);
+            exit(-1);
+    }
+    
+}
+
+
+//bios video functions
+void emulator::_put_string(const char *str, size_t n){
+    for(uint32_t i = 0; i < n; i++){
+        _io_out8(0x03F8, str[i]);
+    }
+}
+
+void emulator::_bios_video_teletype(){
+    uint8_t color = _get_register8(BL) & 0x0F;
+    uint8_t ch = _get_register8(AL);
+    
+    char buf[32];
+    
+    //convert by table
+    uint8_t terminal_color = bios_to_terminal[color & 0x07];
+    uint8_t bright = (color & 0x08) >> 3;
+    
+    int len = sprintf(buf, "\x1b[%d;%dm%c\x1b[0m", bright, terminal_color, ch);
+    _put_string(buf, len);
+}
+
+void emulator::_bios_video(){
+    uint8_t func = _get_register8(AH);
+    switch(func){
+        case 0x0E:
+            _bios_video_teletype();
+            break;
+        default:
+            fprintf(stderr, "error : not implemted bios video function. func=0x%02x\n", func);
+            exit(-1);
+    }
 }
