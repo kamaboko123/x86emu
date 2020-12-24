@@ -6,7 +6,7 @@ OBJS = crt0.o test.o
 CC = gcc
 LD = ld
 AS = nasm
-CFLAGS += -nostdlib -fno-asynchronous-unwind-tables -g -fno-stack-protector -m32
+CFLAGS += -nostdlib -fno-asynchronous-unwind-tables -g -fno-stack-protector -m32 -fno-pic
 LDFLAGS += --entry=start --oformat=binary -Ttext 0x7c00 -m elf_i386
 
 .PHONY: all
